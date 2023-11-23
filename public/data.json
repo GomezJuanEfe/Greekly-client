@@ -1,0 +1,18 @@
+[
+  {
+    "id": "6adb3c96-06fb-424f-9b36-405b470ee464",
+    "category": "t-shirt",
+    "image": "./img/shirt.png",
+    "description": "UA Tech fabric is quick-drying, ultra-soft & has a more natural feel. Material wicks sweat & dries really fast. New, streamlined fit & shaped hem. UA Tech™ is our original go-to training gear: loose, light, and it keeps you cool. That's why this men's training T-shirt is everything you need. Loose: Fuller cut for complete comfort. TALL Sizes: All tall sizes are 2”/ 5 cm longer than regular sizes. Sleeve lengths are adjusted proportionately depending on silhouette.",
+    "name": "Under Armour Men's Tech 2.0 Short-Sleeve T-Shirt",
+    "price": 1299
+  },
+  {
+    "id": "9ba4cc9b-76aa-432d-8a3f-eb6672d824b4",
+    "category": "hat",
+    "image": "./img/hat.png",
+    "description": "Stay warm through the cold. This men's everyday beanie is made from rib-knit fabric that's soft and stretchy. Featuring a camouflage print and Carhartt label.",
+    "name": "Carhartt Men's Knit Camo Beanie",
+    "price": 1799
+  }
+]
