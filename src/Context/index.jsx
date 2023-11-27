@@ -1,34 +1,20 @@
 import { createContext, useState, useEffect } from 'react'
+import { toast } from 'react-hot-toast'
+import { errorConfig } from '../Config/toast'
+import productService from '../services/product'
+import Cookies from 'js-cookie'
 
 export const ShoppingCartContext = createContext()
-
-export const initializeLocalStorage = () => {
-  const accountInLocalStorage = localStorage.getItem('account')
-  const signOutInLocalStorage = localStorage.getItem('sign-out')
-  let parsedAccount
-  let parsedSignOut
-
-  if (!accountInLocalStorage) {
-    localStorage.setItem('account', JSON.stringify({}))
-    parsedAccount = {}
-  } else {
-    parsedAccount = JSON.parse(accountInLocalStorage)
-  }
-
-  if (!signOutInLocalStorage) {
-    localStorage.setItem('sign-out', JSON.stringify(false))
-    parsedSignOut = false
-  } else {
-    parsedSignOut = JSON.parse(signOutInLocalStorage)
-  }
-}
 
 export const ShoppingCartProvider = ({ children }) => {
   // My account
   const [account, setAccount] = useState({})
 
-  // Sign out
-  const [signOut, setSignOut] = useState(false)
+  // Token
+  const [token, setToken] = useState(null)
+
+  // User profile
+  const [userProfile, setUserProfile] = useState(null)
 
   // Shopping Cart · Increment quantity
   const [count, setCount] = useState(0)
@@ -51,9 +37,10 @@ export const ShoppingCartProvider = ({ children }) => {
   const [cartProducts, setCartProducts] = useState([])
 
   // Shopping Cart · Order
-  const [order, setOrder] = useState([])
+  const [orders, setOrders] = useState([])
 
   // Get products
+  const [loading, setLoading] = useState(true)
   const [items, setItems] = useState(null)
   const [filteredItems, setFilteredItems] = useState(null)
 
@@ -64,12 +51,34 @@ export const ShoppingCartProvider = ({ children }) => {
   const [searchByCategory, setSearchByCategory] = useState(null)
 
   useEffect(() => {
-    fetch('../../public/data.json')
-      .then(response => response.json())
-      .then(data => {
-        setItems(data)
-      })
+    try {
+      getAllProducts()
+    } catch (error) {
+      toast.error(error.message, errorConfig)
+    } finally {
+      setLoading(false)
+    }
   }, [])
+
+  useEffect(() => {
+    const loggedUserJSON = Cookies.get('userSession')
+
+    if (loggedUserJSON) {
+      const user = JSON.parse(loggedUserJSON)
+      setUserProfile(user.profile)
+      setToken(user.token)
+    }
+  }, [])
+
+  const getAllProducts = async () => {
+    try {
+      const { data } = await productService.getAll()
+
+      setItems(data.products)
+    } catch (error) {
+      toast.error(error.message, errorConfig)
+    }
+  }
 
   const filteredItemsByTitle = (items, searchByTitle) => {
     return items?.filter(item => item.name.toLowerCase().includes(searchByTitle.toLowerCase()))
@@ -119,8 +128,8 @@ export const ShoppingCartProvider = ({ children }) => {
       openCheckoutSideMenu,
       closeCheckoutSideMenu,
       toggleCheckoutSideMenu,
-      order,
-      setOrder,
+      orders,
+      setOrders,
       items,
       setItems,
       searchByTitle,
@@ -130,8 +139,11 @@ export const ShoppingCartProvider = ({ children }) => {
       setSearchByCategory,
       account,
       setAccount,
-      signOut,
-      setSignOut
+      token,
+      setToken,
+      userProfile,
+      setUserProfile,
+      loading
     }}>
       {children}
     </ShoppingCartContext.Provider>

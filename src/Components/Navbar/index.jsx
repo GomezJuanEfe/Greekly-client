@@ -2,35 +2,24 @@ import { useContext } from 'react'
 import { NavLink } from 'react-router-dom'
 import { ShoppingCartContext } from '../../Context'
 import ShoppingCart from '../ShoppingCart'
+import Cookies from 'js-cookie'
 
 const Navbar = () => {
   const context = useContext(ShoppingCartContext)
   const activeStyle = 'underline underline-offset-4'
 
-  // Sign Out
-  const signOut = localStorage.getItem('sign-out')
-  const parsedSignOut = JSON.parse(signOut)
-  const isUserSignOut = context.signOut || parsedSignOut
-  // Account
-  const account = localStorage.getItem('account')
-  const parsedAccount = JSON.parse(account)
-  // Has an account
-  const noAccountInLocalStorage = parsedAccount ? Object.keys(parsedAccount).length === 0 : true
-  const noAccountInLocalState = context.account ? Object.keys(context.account).length === 0 : true
-  const hasUserAnAccount = !noAccountInLocalStorage || !noAccountInLocalState
-
   const handleSignOut = () => {
-    const stringifiedSignOut = JSON.stringify(true)
-    localStorage.setItem('sign-out', stringifiedSignOut)
-    context.setSignOut(true)
+    context.setUserProfile(null)
+    context.setToken(null)
+    Cookies.remove('userSession')
   }
 
   const renderView = () => {
-    if (hasUserAnAccount && !isUserSignOut) {
+    if (context.userProfile) {
       return (
         <>
           <li className='text-black/60'>
-            {parsedAccount?.email}
+            {context.userProfile.email}
           </li>
           <li>
             <NavLink
@@ -71,10 +60,13 @@ const Navbar = () => {
   }
 
   return (
-    <nav className='flex justify-between items-center fixed z-10 top-0 w-full py-5 px-8 text-sm font-light bg-white'>
+    <nav className='flex justify-between items-center fixed z-10 top-0 w-full py-5 px-8 text-sm gap-3 font-light bg-white max-md:flex-col lg:flex-row'>
       <ul className='flex items-center gap-3'>
         <li className='font-semibold text-lg'>
-          <NavLink to={`${isUserSignOut ? '/sign-in' : '/'}`}>
+          <NavLink
+            to={`${context.userProfile ? '/' : '/sign-in'}`}
+            onClick={() => context.setSearchByCategory()}
+          >
             Greekly
           </NavLink>
         </li>
@@ -91,7 +83,7 @@ const Navbar = () => {
         <li>
           <NavLink
             to='/shirts'
-            onClick={() => context.setSearchByCategory('t-shirt')}
+            onClick={() => context.setSearchByCategory('shirt')}
             className={({ isActive }) =>
               isActive ? activeStyle : undefined
             }>
