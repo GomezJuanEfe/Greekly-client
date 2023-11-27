@@ -86,7 +86,7 @@ const CheckoutSideMenu = () => {
 
   return (
     <aside
-      className={`${context.isCheckoutSideMenuOpen ? 'flex' : 'hidden'} checkout-side-menu flex-col fixed right-0 border border-black rounded-lg bg-white z-10`}>
+      className={`${context.isCheckoutSideMenuOpen ? 'flex' : 'hidden'} checkout-side-menu flex-col fixed right-0 border border-black rounded-lg bg-white`}>
       {renderBody()}
       {
         view === 'order' &&
